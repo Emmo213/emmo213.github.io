@@ -223,7 +223,7 @@
             Historic Nordson Depot &amp; the Water Level Route
           </h2>
           <p class="mt-4 text-base sm:text-lg text-slate-600 leading-relaxed">
-            From 19th-century Lake Shore railroading to a thriving civic gathering place and premier Northern Ohio railfan viewing park.
+            From 19th century Lake Shore railroading to a thriving civic gathering place and premier Northern Ohio railfan viewing park.
           </p>
         </div>
 
@@ -538,9 +538,9 @@
 
           <!-- Avg. Hourly Trains -->
           <div class="bg-alabaster rounded-2xl p-6 border border-slate-200/90 shadow-sm">
-            <div class="text-xs font-bold uppercase tracking-wider text-slate-500">Avg. Hourly Trains</div>
-            <div class="mt-2 font-serif text-3xl sm:text-4xl font-bold text-forest-deep">~2.0 / hr</div>
-            <div class="mt-1.5 text-xs font-medium text-forest-primary">All-train corridor average</div>
+            <div class="text-xs font-bold uppercase tracking-wider text-slate-500" id="kpi-hourly-label">Avg. Hourly Trains</div>
+            <div class="mt-2 font-serif text-3xl sm:text-4xl font-bold text-forest-deep" id="kpi-hourly-value">~2.0 / hr</div>
+            <div class="mt-1.5 text-xs font-medium text-forest-primary" id="kpi-hourly-sub">All-train corridor average</div>
           </div>
         </div>
 
@@ -554,7 +554,7 @@
                 <h3 class="font-serif text-lg sm:text-xl font-bold text-forest-deep" id="chart-title">
                   Average Trains per Hour by Time of Day (EST) - All Trains
                 </h3>
-                <p class="text-xs text-slate-500 mt-0.5">
+                <p class="text-xs text-slate-500 mt-0.5" id="chart-subtitle">
                   Highlighted bars denote peak and quietest hourly windows across the 24-day sample.
                 </p>
               </div>
@@ -687,10 +687,10 @@
               <div class="p-4 rounded-xl bg-forest-primary/60 border border-forest-sage/30 space-y-3">
                 <div class="text-xs font-semibold uppercase tracking-wider text-forest-sage">Direct Email</div>
                 <div class="font-mono text-base sm:text-lg font-bold text-brass-light break-all">
-                  bdembinski@amherstohio.org
+                  contact@amherstrailpark.org
                 </div>
                 <div class="flex flex-wrap gap-2.5 pt-1">
-                  <a href="mailto:bdembinski@amherstohio.org?subject=Amherst%20Rail%20Park%20Inquiry" class="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-brass text-forest-deep font-bold text-xs sm:text-sm hover:bg-brass-light transition-colors">
+                  <a href="mailto:contact@amherstrailpark.org?subject=Amherst%20Rail%20Park%20Inquiry" class="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-brass text-forest-deep font-bold text-xs sm:text-sm hover:bg-brass-light transition-colors">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
                     </svg>
@@ -734,6 +734,7 @@
   <!-- =====================================================================
        INTERACTIVE JAVASCRIPT (Mobile Menu, Volume Toggle, Bar Chart, Copy)
   ====================================================================== -->
+  <script src="traffic-data.js"></script>
   <script>
     // Set current year automatically
     document.getElementById('current-year').textContent = new Date().getFullYear();
@@ -762,39 +763,23 @@
       });
     });
 
-    // Hourly Corridor Data (24-Hour EST Profile anchored to empirical Amherst Train Log stats)
-    // All Trains: Daily Avg = 48.63 (1,167 / 24 days), Peak 04:00 = 3.58/hr, Quietest 18:00 = 0.83/hr
-    const hourlyDataAll = [
-      2.13, 2.08, 2.25, 2.42, 3.58, 2.67,
-      2.58, 2.17, 1.88, 1.79, 1.75, 1.71,
-      1.67, 1.63, 1.54, 1.46, 1.38, 1.17,
-      0.83, 1.33, 1.79, 2.04, 2.25, 2.54
-    ];
-
-    // Freight Only (Excluding Amtrak): Daily Avg = 44.71, Peak 06:00 = 2.46/hr, 2nd Peak 23:00 = 2.42/hr, Quietest 18:00 = 0.83/hr
-    const hourlyDataFreight = [
-      2.04, 1.96, 1.92, 1.96, 2.13, 2.21,
-      2.46, 2.08, 1.83, 1.75, 1.71, 1.67,
-      1.63, 1.58, 1.50, 1.42, 1.33, 1.13,
-      0.83, 1.29, 1.75, 2.00, 2.13, 2.42
-    ];
-
+    // Monthly corridor traffic values live in traffic-data.js (window.CORRIDOR_TRAFFIC_DATA)
     function renderHourlyChart(mode) {
+      const config = window.CORRIDOR_TRAFFIC_DATA;
+      const modeData = config.modes[mode];
       const container = document.getElementById('hourly-chart-bars');
-      const data = mode === 'all' ? hourlyDataAll : hourlyDataFreight;
-      const maxVal = 3.8; // Consistent vertical scale for easy visual comparison
-      const peakHour = mode === 'all' ? 4 : 6;
-      const secondPeakHour = mode === 'all' ? -1 : 23;
-      const quietHour = 18;
+      const maxVal = config.chartMaxVal || 3.8;
+      const peakHours = modeData.peakHours || [];
+      const quietHour = modeData.quietHour;
 
       container.innerHTML = '';
 
-      data.forEach((val, hour) => {
+      modeData.hourly.forEach((val, hour) => {
         const heightPct = Math.max(8, Math.round((val / maxVal) * 100));
         const hourLabel = String(hour).padStart(2, '0') + ':00';
 
         let barColor = 'bg-forest-primary hover:bg-forest-accent';
-        if (hour === peakHour || hour === secondPeakHour) {
+        if (peakHours.includes(hour)) {
           barColor = 'bg-brass hover:bg-brass-light';
         } else if (hour === quietHour) {
           barColor = 'bg-slate-400 hover:bg-slate-500';
@@ -816,51 +801,35 @@
     }
 
     function setTrafficMode(mode) {
+      const config = window.CORRIDOR_TRAFFIC_DATA;
+      const modeData = config.modes[mode];
       const btnAll = document.getElementById('btn-mode-all');
       const btnFreight = document.getElementById('btn-mode-freight');
 
-      if (mode === 'all') {
-        btnAll.className = 'px-4 sm:px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all bg-forest-deep text-white shadow-sm';
-        btnFreight.className = 'px-4 sm:px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all text-forest-deep hover:bg-forest-sage/60';
+      const activeBtnClass = 'px-4 sm:px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all bg-forest-deep text-white shadow-sm';
+      const inactiveBtnClass = 'px-4 sm:px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all text-forest-deep hover:bg-forest-sage/60';
 
-        document.getElementById('kpi-1-label').textContent = 'Daily Train Average';
-        document.getElementById('kpi-1-value').textContent = '48.63';
-        document.getElementById('kpi-1-sub').textContent = '1,167 total logged movements (24 days)';
+      btnAll.className = mode === 'all' ? activeBtnClass : inactiveBtnClass;
+      btnFreight.className = mode === 'freight' ? activeBtnClass : inactiveBtnClass;
 
-        document.getElementById('kpi-2-label').textContent = 'Busiest Hour (EST)';
-        document.getElementById('kpi-2-value').textContent = '04:00 – 04:59';
-        document.getElementById('kpi-2-sub').textContent = '3.58 trains/hr avg. (peak window)';
+      const kpiIds = ['kpi-1', 'kpi-2', 'kpi-4'];
+      kpiIds.forEach((id, index) => {
+        const item = modeData.kpis[index];
+        if (!item) return;
+        document.getElementById(`${id}-label`).textContent = item.label;
+        document.getElementById(`${id}-value`).textContent = item.value;
+        document.getElementById(`${id}-sub`).textContent = item.sub;
+      });
 
-        document.getElementById('kpi-4-label').textContent = 'Traffic Composition';
-        document.getElementById('kpi-4-value').textContent = '8.4% Amtrak';
-        document.getElementById('kpi-4-sub').textContent = 'Lake Shore Limited & Floridian + 91.6% Freight';
+      if (config.avgHourlyCard) {
+        document.getElementById('kpi-hourly-label').textContent = config.avgHourlyCard.label;
+        document.getElementById('kpi-hourly-value').textContent = config.avgHourlyCard.value;
+        document.getElementById('kpi-hourly-sub').textContent = config.avgHourlyCard.sub;
+      }
 
-        document.getElementById('chart-title').textContent = 'Average Trains per Hour by Time of Day (EST) — All Trains';
-        document.getElementById('analytics-insight-box').innerHTML =
-          '<strong>Key Corridor Insight:</strong> Including Amtrak, the <strong>04:00-04:59 EST</strong> hour averages <strong>3.58 trains/hr</strong>, driven by early-morning scheduled Amtrak <em>Lake Shore Limited</em> and <em>Floridian</em> passenger trains overlapping with overnight priority freight.';
-      } else {
-        btnFreight.className = 'px-4 sm:px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all bg-forest-deep text-white shadow-sm';
-        btnAll.className = 'px-4 sm:px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all text-forest-deep hover:bg-forest-sage/60';
-
-        document.getElementById('kpi-1-label').textContent = 'Daily Freight Average';
-        document.getElementById('kpi-1-value').textContent = '44.71';
-        document.getElementById('kpi-1-sub').textContent = 'Freight movements/day (excluding Amtrak)';
-
-        document.getElementById('kpi-2-label').textContent = 'Busiest Freight Hour';
-        document.getElementById('kpi-2-value').textContent = '06:00 – 06:59';
-        document.getElementById('kpi-2-sub').textContent = '2.46 freight trains/hr (2nd: 23:00 at 2.42/hr)';
-
-        document.getElementById('kpi-3-label').textContent = 'Quietest Window (EST)';
-        document.getElementById('kpi-3-value').textContent = '18:00 – 18:59';
-        document.getElementById('kpi-3-sub').textContent = '0.83 trains/hr average during evening lull';
-
-        document.getElementById('kpi-4-label').textContent = '24-Hour Freight Cadence';
-        document.getElementById('kpi-4-value').textContent = 'Steady 24/7';
-        document.getElementById('kpi-4-sub').textContent = 'Balanced intermodal, manifest & unit traffic';
-
-        document.getElementById('chart-title').textContent = 'Average Freight Trains per Hour (EST) — Excluding Amtrak';
-        document.getElementById('analytics-insight-box').innerHTML =
-          '<strong>Freight-Only Insight:</strong> Removing Amtrak eliminates the 04:00 morning spike and reveals a steady, flatter 24-hour intermodal and manifest freight cadence&mdash;peaking at <strong>06:00-06:59 EST</strong> (<strong>2.46/hr</strong>) and <strong>23:00-23:59 EST</strong> (<strong>2.42/hr</strong>).';
+      document.getElementById('chart-title').textContent = modeData.chartTitle;
+      if (config.chartSubtitle) {
+        document.getElementById('chart-subtitle').textContent = config.chartSubtitle;
       }
 
       renderHourlyChart(mode);
@@ -868,7 +837,7 @@
 
     // One-Click Copy Email Address (using document.execCommand for broad compatibility)
     function copyContactEmail() {
-      const email = 'bdembinski@amherstohio.org';
+      const email = 'contact@amherstrailpark.org';
       const tempInput = document.createElement('textarea');
       tempInput.value = email;
       tempInput.setAttribute('readonly', '');
@@ -879,9 +848,9 @@
 
       try {
         document.execCommand('copy');
-        showToast('Copied bdembinski@amherstohio.org to clipboard!');
+        showToast('Copied contact@amherstrailpark.org to clipboard!');
       } catch (err) {
-        showToast('Email: bdembinski@amherstohio.org');
+        showToast('Email: contact@amherstrailpark.org');
       }
 
       document.body.removeChild(tempInput);
@@ -905,9 +874,9 @@
       }, 3200);
     }
 
-    // Initialize chart on load
+    // Initialize traffic analytics & chart from traffic-data.js on load
     window.addEventListener('DOMContentLoaded', () => {
-      renderHourlyChart('all');
+      setTrafficMode('all');
     });
   </script>
 </body>
