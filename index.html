@@ -727,7 +727,7 @@
       <div class="pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-forest-sage/75">
          <p class="text-xs text-forest-sage/75">671 Franklin Ave, Amherst, OH 44001 </p>
         <p>&copy; <span id="current-year">2026</span> Amherst Rail Park &bull; Amherst, Ohio. Built for GitHub Pages.</p>
-        <p>Corridor statistics compiled Oct 24 through Nov 16, 2026.</p>
+        <p id="corridor-compiled-note">Corridor statistics compiled Oct 24 through Nov 16, 2026.</p>
       </div>
     </div>
   </footer>
@@ -922,6 +922,9 @@
 
     // Initialize traffic analytics & charts from traffic-data.js on load
     window.addEventListener('DOMContentLoaded', () => {
+      if (window.CORRIDOR_TRAFFIC_DATA.compiledNote) {
+        document.getElementById('corridor-compiled-note').textContent = window.CORRIDOR_TRAFFIC_DATA.compiledNote;
+      }
       setTrafficMode('all');
       renderDailyChart();
     });
