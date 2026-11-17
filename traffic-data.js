@@ -20,6 +20,22 @@ window.CORRIDOR_TRAFFIC_DATA = {
     sub: "All-train corridor average",
   },
 
+  // 2nd Chart: Average Trains per Day by Day of Week
+  dailyVolume: {
+    title: "Average Trains per Day by Day of Week",
+    subtitle: "Highlighted bars denote the busiest and quietest days of the week.",
+    maxVal: 55, // Y-axis ceiling (set slightly above the highest daily average)
+    days: [
+      { day: "Mon", label: "Monday", value: 46 },
+      { day: "Tue", label: "Tuesday", value: 49 },
+      { day: "Wed", label: "Wednesday", value: 47.33 },
+      { day: "Thu", label: "Thursday", value: 49.33 },
+      { day: "Fri", label: "Friday", value: 48.67 },
+      { day: "Sat", label: "Saturday", value: 50 },
+      { day: "Sun", label: "Sunday", value: 50 },
+    ],
+  },
+
   modes: {
     all: {
       chartTitle: "Average Trains per Hour by Time of Day (EST) — All Trains",
