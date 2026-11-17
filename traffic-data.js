@@ -7,6 +7,9 @@
  * index.html reads from this configuration automatically.
  */
 window.CORRIDOR_TRAFFIC_DATA = {
+  // Date-range note displayed in the footer
+  compiledNote: "Corridor statistics compiled Oct 24 through Nov 16, 2026.",
+
   // Subtitle shown under the bar chart title
   chartSubtitle: "Highlighted bars denote peak and quietest hourly windows across the 24-day sample.",
 
