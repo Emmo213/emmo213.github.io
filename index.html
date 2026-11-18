@@ -964,7 +964,8 @@
       const mapEl = document.getElementById('dora-map');
       if (!mapEl || typeof L === 'undefined') return;
 
-      const map = L.map('dora-map').setView([41.3975, -82.2240], 16);
+      const depotCoords = [41.395114, -82.219021];
+      const map = L.map('dora-map').setView(depotCoords, 15);
 
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
@@ -989,37 +990,41 @@
         shadowSize: [41, 41]
       });
 
-      const depotMarker = L.marker([41.3995, -82.2240], { icon: depotIcon })
+      const depotMarker = L.marker(depotCoords, { icon: depotIcon })
         .addTo(map)
         .bindPopup('<b>The Amherst Depot</b><br>671 Franklin Ave<br><i>Your Amherst Rail Park Starting Point!</i>');
 
       depotMarker.openPopup();
 
       const businesses = [
-        { name: "5 Points Tavern", lat: 41.3978, lon: -82.2215, address: "134 Park Ave" },
-        { name: "Captain's Club", lat: 41.3975, lon: -82.2241, address: "232 Park Ave L" },
-        { name: "Cedar Pub", lat: 41.3975, lon: -82.2230, address: "200 Park Ave" },
-        { name: "Cole's Public House", lat: 41.3965, lon: -82.2245, address: "209 S Main St" },
-        { name: "Commando Coffee Co.", lat: 41.3975, lon: -82.2247, address: "254 Park Ave" },
-        { name: "Doc Watson's Café", lat: 41.3976, lon: -82.2220, address: "166 Park Ave" },
-        { name: "D'Tutanelli's Pizza", lat: 41.3948, lon: -82.2268, address: "103 Milan Ave" },
-        { name: "Frida Taquería and Tequila", lat: 41.3965, lon: -82.2255, address: "249 Church St" },
-        { name: "Ghost Tree Brewing Company", lat: 41.3957, lon: -82.2268, address: "300 Church St" },
-        { name: "The Golf Lounge", lat: 41.3977, lon: -82.2217, address: "136B Park Ave" },
-        { name: "Hastee Tastee", lat: 41.3948, lon: -82.2275, address: "466 Cleveland Ave" },
-        { name: "Hot Dog Heaven", lat: 41.3945, lon: -82.2277, address: "493 Cleveland Ave" },
-        { name: "Olde Town Pizza House", lat: 41.3961, lon: -82.2232, address: "195 Cleveland Ave" },
-        { name: "Park Lanes Bar & Grille", lat: 41.3975, lon: -82.2244, address: "249 Park Ave" },
-        { name: "Quarry Cafe", lat: 41.3976, lon: -82.2219, address: "161 Park Ave" },
-        { name: "Right Track Nutrition", lat: 41.3978, lon: -82.2216, address: "138 Park Ave" },
-        { name: "Ziggy's Pub & Restaurant", lat: 41.3975, lon: -82.2228, address: "193 Park Ave" }
+        { name: "5 Points Tavern", lat: 41.398208, lon: -82.226124, address: "134 Park Ave" },
+        { name: "Captain's Club", lat: 41.398238, lon: -82.224603, address: "232 Park Ave L" },
+        { name: "Cedar Pub", lat: 41.398275, lon: -82.225217, address: "200 Park Ave" },
+        { name: "Cole's Public House", lat: 41.398204, lon: -82.226466, address: "209 S Main St" },
+        { name: "Commando Coffee Co.", lat: 41.398112, lon: -82.224049, address: "254 Park Ave" },
+        { name: "Doc Watson's Café", lat: 41.398263, lon: -82.225671, address: "166 Park Ave" },
+        { name: "D'Tutanelli's Pizza", lat: 41.398673, lon: -82.227013, address: "103 Milan Ave" },
+        { name: "Frida Taquería and Tequila", lat: 41.397818, lon: -82.224973, address: "249 Church St" },
+        { name: "Ghost Tree Brewing Company", lat: 41.397416, lon: -82.225399, address: "300 Church St" },
+        { name: "The Golf Lounge", lat: 41.398201, lon: -82.225916, address: "136B Park Ave" },
+        { name: "Hastee Tastee", lat: 41.400703, lon: -82.221684, address: "466 Cleveland Ave" },
+        { name: "Hot Dog Heaven", lat: 41.400850, lon: -82.221400, address: "493 Cleveland Ave" },
+        { name: "Olde Town Pizza House", lat: 41.399591, lon: -82.225218, address: "195 Cleveland Ave" },
+        { name: "Park Lanes Bar & Grille", lat: 41.398486, lon: -82.224439, address: "249 Park Ave" },
+        { name: "Quarry Cafe", lat: 41.398579, lon: -82.225724, address: "161 Park Ave" },
+        { name: "Right Track Nutrition", lat: 41.398265, lon: -82.226036, address: "138 Park Ave" },
+        { name: "Ziggy's Pub & Restaurant", lat: 41.398538, lon: -82.225242, address: "193 Park Ave" }
       ];
 
+      const bounds = L.latLngBounds([depotCoords]);
       businesses.forEach((b) => {
         L.marker([b.lat, b.lon], { icon: greenIcon })
           .addTo(map)
           .bindPopup(`<b>${b.name}</b><br>${b.address}`);
+        bounds.extend([b.lat, b.lon]);
       });
+
+      map.fitBounds(bounds, { padding: [35, 35], maxZoom: 16 });
     }
   </script>
 </body>
